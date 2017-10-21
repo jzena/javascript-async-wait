@@ -1,5 +1,9 @@
 const fetch = require('node-fetch');
 
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// instructor: https://github.com/mariusschulz/egghead-async-await
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 //// simple function
 // function showGitHubUser(handle) {
 //     const url = `https://api.github.com/users/${handle}`;
@@ -11,6 +15,7 @@ const fetch = require('node-fetch');
 //         });
 // }
 // showGitHubUser("jzena");
+
 
 //// async function
 // async function showGitHubUser(handle) {
@@ -51,6 +56,7 @@ const fetch = require('node-fetch');
 //     console.log(user.name);
 //     console.log(user.location);
 // })();
+
 
 //// Handle Errors in asynchronous functions
 // async function fetchGitHubUser(handle) {
@@ -100,23 +106,68 @@ const fetch = require('node-fetch');
 // showUserAndRepost("jzena");
 
 
-
 //// await multiple promises concurrently with promise.all()
-async function fetchFromGitHub(endpoint) {
-    const url = `https://api.github.com${endpoint}`;
-    const response = await fetch(url);
-    return await response.json();
+// async function fetchFromGitHub(endpoint) {
+//     const url = `https://api.github.com${endpoint}`;
+//     const response = await fetch(url);
+//     return await response.json();
+
+// }
+// async function showUserAndRepost(handle) {
+//     const [user, repos] = await Promise.all([
+//         fetchFromGitHub(`/users/${handle}`),
+//         fetchFromGitHub(`/users/${handle}/repos`)
+//     ]);
+
+//     console.log(user.name);
+//     console.log(`${repos.length} repos`);
+// }
+// showUserAndRepost("jzena");
+
+
+//// Use the await operator with any thenable
+// const Bluebird = require("bluebird");
+// async function main() {
+
+//     console.log("working...");
+//     await Bluebird.delay(2000);
+//     console.log("Done.");
+// }
+
+// main();
+
+
+//// Iterate asynchronously with the for-await-of loop
+Symbol.asyncIterator = Symbol.asyncIterator || Symbol("asyncIterator");
+
+const delay = (ms) => new Promise(resolve => {
+    setTimeout(resolve, ms);
+});
+
+async function* someGenerator() {
+    await delay(1000);
+    yield 1;
+    await delay(1000);
+    yield 2;
+    await delay(1000);
+    yield 3;
 
 }
-async function showUserAndRepost(handle) {
-    const [user, repos] = await Promise.all([
-        fetchFromGitHub(`/users/${handle}`),
-        fetchFromGitHub(`/users/${handle}/repos`)
-    ]);
 
-    console.log(user.name);
-    console.log(`${repos.length} repos`);
+async function main() {
+    // for await (const value of someGenerator()) {
+    //     console.log(value);
+    // }
+    const generator = someGenerator();
+    while (true) {
+        const { value, done } = await generator.next();
+        if (done) {
+            break;
+        }
+        console.log(value);
+
+    }
 }
-showUserAndRepost("jzena");
+main();
 
 // run: node async.js
