@@ -9,7 +9,7 @@ node async.js
 
 ## Lesson Code
 
-```
+```js
 const fetch = require("node-fetch");
 
 async function fetchFromGitHub(endpoint) {
